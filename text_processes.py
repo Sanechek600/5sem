@@ -4,9 +4,11 @@ import logging
 import nltk
 from nltk.tokenize import word_tokenize
 from nltk.stem import SnowballStemmer
+from nltk.corpus import stopwords
 
 
 nltk.download("punkt_tab")
+nltk.download("stopwords")
 
 def cyrillic_check(text: str) -> bool:
     """Helper function that checks if there are cyrillic characters in the text
@@ -42,7 +44,8 @@ def stem(text: str) -> list[str]:
     if cyrillic_check(text):
         stemmer = SnowballStemmer("russian")
         tokens = word_tokenize(text)
-        stemmed_words_c = [stemmer.stem(word) for word in tokens]
+        stop_words = set(stopwords.words("russian"))
+        stemmed_words_c = [stemmer.stem(word) for word in tokens if word not in stop_words]
 
         for word in stemmed_words_c:
             if cyrillic_check(word):
@@ -52,7 +55,8 @@ def stem(text: str) -> list[str]:
     if latin_check(text):
         stemmer = SnowballStemmer("english")
         tokens = word_tokenize(text)
-        stemmed_words_l = [stemmer.stem(word) for word in tokens]
+        stop_words = set(stopwords.words("english"))
+        stemmed_words_l = [stemmer.stem(word) for word in tokens if word not in stop_words]
 
         for word in stemmed_words_l:
             if latin_check(word):
