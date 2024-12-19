@@ -1,4 +1,5 @@
 import logging
+import os.path
 
 from rw_processes import read_file, serialize_trie, deserialize_trie
 from text_processes import stem
@@ -15,19 +16,14 @@ logging.basicConfig(
 )
 
 if __name__ == "__main__":
-    abs_path = "D:/test.txt"
+    dir_path = "D:/Scour_test/"
     
-    a = read_file(abs_path, encoding="utf-8")
-    print("Name: ", a["Filename"])
-    print("Content: \n", a["Content"])
+    pt = PrefixTree
 
-    stemmed_words = stem(a["Content"])
-
-    pt = PrefixTree()
-    for word in stemmed_words:
-        pt.insert(word, [a["Filename"]])
-    print(pt.find_word("alpha"))
-
-    serialize_trie(pt, "test.pkl")
-    npt = deserialize_trie("test.pkl")
-    print(npt.find_word("alpha"))
+    for i in range(1, 5):
+        path = os.path.join(dir_path, f"test{i}.txt")
+        with open(path, 'r') as f:
+            dict_of_file = read_file(path, encoding="utf-8")
+            stemmed_words = stem(dict_of_file["Content"]).append(dict_of_file["Filename"])
+            for word in stemmed_words:
+                pt.insert(word, os.path.basename(path))

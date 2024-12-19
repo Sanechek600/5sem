@@ -1,9 +1,9 @@
 from typing import List
 
 class TrieNode:
-    def __init__(self, term='', doclist=list()):
+    def __init__(self, term=''):
         self.term = term
-        self.doclist = doclist
+        self.doclist = list()
         self.children = dict()
         self.is_word = False
 
@@ -19,7 +19,8 @@ class PrefixTree:
         for i, char in enumerate(word):
             if char not in current.children:
                 prefix = word[0:i+1]
-                current.children[char] = TrieNode(prefix, doclist)
+                current.children[char] = TrieNode(prefix)
+                current.children[char].doclist += doclist
             current = current.children[char]
         current.is_word = True
 
