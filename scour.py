@@ -1,7 +1,7 @@
 import logging
 import os.path
 
-from rw_processes import read_file, serialize_trie, deserialize_trie
+import rw_processes as rw
 from text_processes import stem
 from trie import PrefixTree
 
@@ -22,11 +22,6 @@ if __name__ == "__main__":
 
     for i in range(1, 5):
         path = os.path.join(dir_path, f"test{i}.txt")
-        with open(path, 'r') as f:
-            dict_of_file = read_file(path, encoding="utf-8")
-        stemmed_words = stem(dict_of_file["Content"])
-        stemmed_words.append(dict_of_file["Filename"])
-        for word in stemmed_words:
-            pt.insert(word=word, doclist=[os.path.abspath(path)])
+        rw.read_file_to_trie(pt, path)
     
     print(pt.find_word("альф").doclist)

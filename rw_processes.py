@@ -5,6 +5,7 @@ from typing import Dict
 from pathlib import Path
 
 from trie import PrefixTree
+from text_processes import stem
 
 
 def read_file(file_path: str, encoding: str) -> Dict[str, str]:
@@ -24,6 +25,23 @@ def read_file(file_path: str, encoding: str) -> Dict[str, str]:
     except Exception as e: 
         logging.error(f"Error in read_file: {e}")
     return out
+
+def read_file_to_trie(pt: PrefixTree, file_path: str) -> None:
+    """Reads the needed .txt file, returns PrefixTree made from it
+    Args:
+        file_path (str): path to the neede file
+        encoding (str): encoding to open the file with
+    Returns:
+        Dict[str]: Dictionary with keys "Filename" and "Content"
+    """
+    with open(file_path, 'r') as f:
+        dict_of_file = read_file(file_path, encoding="utf-8")
+
+    stemmed_words = stem(dict_of_file["Content"])
+    stemmed_words.append(dict_of_file["Filename"])
+
+    for word in stemmed_words:
+        pt.insert(word=word, doclist=[os.path.abspath(file_path)])
 
 def serialize_trie(trie: PrefixTree, file_path: str) -> None:
     """
