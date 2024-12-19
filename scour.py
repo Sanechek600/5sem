@@ -4,6 +4,7 @@ import os.path
 import rw_processes as rw
 from text_processes import stem
 from trie import PrefixTree
+from search import find_doclist_of_term, find_doclist_of_word
 
 
 logging.basicConfig(
@@ -24,4 +25,4 @@ if __name__ == "__main__":
         path = os.path.join(dir_path, f"test{i}.txt")
         rw.read_file_to_trie(pt, path)
     
-    print(pt.find_word("альф").doclist)
+    print(find_doclist_of_word(pt, word="альфа"))
