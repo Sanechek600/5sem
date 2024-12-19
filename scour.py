@@ -1,6 +1,6 @@
 import logging
 
-from rw_processes import read_file
+from rw_processes import read_file, serialize_trie, deserialize_trie
 from text_processes import stem
 from trie import PrefixTree
 
@@ -26,5 +26,8 @@ if __name__ == "__main__":
     pt = PrefixTree()
     for word in stemmed_words:
         pt.insert(word, [a["Filename"]])
+    print(pt.find_word("alpha"))
 
-    print(pt.find_word("bet").doclist)
+    serialize_trie(pt, "test.pkl")
+    npt = deserialize_trie("test.pkl")
+    print(npt.find_word("alpha"))
