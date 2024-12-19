@@ -1,9 +1,30 @@
-from rw_processes import read_file
+import logging
 
+from rw_processes import read_file
+from text_processes import stem
+from trie import PrefixTree
+
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler("logs\\process.log"),
+        logging.StreamHandler()
+    ]
+)
 
 if __name__ == "__main__":
-    abs_path = input("Path to the directory to index: ")
+    abs_path = "D:/test.txt"
     
     a = read_file(abs_path, encoding="utf-8")
     print("Name: ", a["Filename"])
-    print("Content: ", a["Content"])
+    print("Content: \n", a["Content"])
+
+    stemmed_words = stem(a["Content"])
+
+    pt = PrefixTree()
+    for word in stemmed_words:
+        pt.insert(word, [a["Filename"]])
+
+    print(pt.find_word("bet").doclist)

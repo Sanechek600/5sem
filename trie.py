@@ -1,7 +1,9 @@
+from typing import List
+
 class TrieNode:
-    def __init__(self, term=''):
+    def __init__(self, term='', doclist=list()):
         self.term = term
-        self.doclist = list()
+        self.doclist = doclist
         self.children = dict()
         self.is_word = False
 
@@ -9,20 +11,23 @@ class PrefixTree:
     def __init__(self):
         self.root = TrieNode()
     
-    def insert(self, word):
+    def insert(self, word: str, doclist: List[str] = list()) -> None:
+        """Inserts a word into the trie, adding nodes for each character
+        If given doclist, each new node will have that doclist
+        """
         current = self.root
         for i, char in enumerate(word):
             if char not in current.children:
                 prefix = word[0:i+1]
-                current.children[char] = TrieNode(prefix)
+                current.children[char] = TrieNode(prefix, doclist)
             current = current.children[char]
         current.is_word = True
 
-    def find_word(self, word):
-        '''
+    def find_word(self, word: str):
+        """
         Returns the TrieNode representing the given word if it exists
         and None otherwise.
-        '''
+        """
         current = self.root
         for char in word:
             if char not in current.children:
@@ -31,22 +36,22 @@ class PrefixTree:
         if current.is_word:
             return current
         
-    def __child_words_for(self, node, words):
-        '''
+    def __child_words_for(self, node, words: list[str]) -> None:
+        """
         Private helper function. Cycles through all children
         of node recursively, adding them to words if they
         constitute whole words (as opposed to merely prefixes).
-        '''
+        """
         if node.is_word:
             words.append(node.term)
         for letter in node.children:
             self.__child_words_for(node.children[letter], words)
         
-    def starts_with(self, prefix):
-        '''
+    def starts_with(self, prefix: str):
+        """
         Returns a list of all words beginning with the given prefix, or
         an empty list if no words begin with that prefix.
-        '''
+        """
         words = list()
         current = self.root
         for char in prefix:
@@ -61,6 +66,6 @@ if __name__ == "__main__":
     pt = PrefixTree()
     pt.insert("aaa")
     pt.insert("aba")
-    pt.insert("abb")
-    print(pt.find_word("aba"))
+    pt.insert("abb", ['afile', 'pdfile'])
+    print(pt.find_word("abb").doclist)
     print(pt.starts_with("ab"))
