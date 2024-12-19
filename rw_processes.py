@@ -43,6 +43,19 @@ def read_file_to_trie(pt: PrefixTree, file_path: str) -> None:
     for word in stemmed_words:
         pt.insert(word=word, doclist=[os.path.abspath(file_path)])
 
+def scour_directory(dir_path: str) -> PrefixTree:
+    files = []
+    for file in os.listdir(dir_path):
+        if file.endswith(".txt"):
+            files.append(os.path.join(dir_path, file))
+
+    pt = PrefixTree()
+
+    for file in files:
+        read_file_to_trie(pt, file)
+    
+    return pt
+
 def serialize_trie(trie: PrefixTree, file_path: str) -> None:
     """
     Serialize the prefix tree to a file.

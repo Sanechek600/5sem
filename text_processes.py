@@ -7,8 +7,8 @@ from nltk.stem import SnowballStemmer
 from nltk.corpus import stopwords
 
 
-nltk.download("punkt_tab")
-nltk.download("stopwords")
+#nltk.download("punkt_tab")
+#nltk.download("stopwords")
 
 def cyrillic_check(text: str) -> bool:
     """Helper function that checks if there are cyrillic characters in the text
