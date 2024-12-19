@@ -20,6 +20,7 @@ def read_file(file_path: str, encoding: str) -> Dict[str, str]:
         with open(file_path, "r", encoding=encoding) as file:
             out["Filename"] = Path(os.path.basename(file_path)).stem
             out["Content"] = str(file.read())
+            logging.debug(f"Read from {file_path}")
     except Exception as e: 
         logging.error(f"Error in read_file: {e}")
     return out

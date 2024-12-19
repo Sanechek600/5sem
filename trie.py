@@ -1,5 +1,15 @@
 from typing import List
 
+
+def extend_unique(list1: List, list2: List) -> List:
+    """Helper function to mimic set behaviour on lists
+    """
+    res = list1
+    for i in list2:
+        if i not in res:
+            res.append(i)
+    return res
+
 class TrieNode:
     def __init__(self, term=''):
         self.term = term
@@ -20,7 +30,10 @@ class PrefixTree:
             if char not in current.children:
                 prefix = word[0:i+1]
                 current.children[char] = TrieNode(prefix)
-                current.children[char].doclist += doclist
+            current.children[char].doclist = extend_unique(
+                current.children[char].doclist,
+                doclist
+            )
             current = current.children[char]
         current.is_word = True
 
@@ -67,6 +80,8 @@ if __name__ == "__main__":
     pt = PrefixTree()
     pt.insert("aaa")
     pt.insert("aba")
-    pt.insert("abb", ['afile', 'pdfile'])
+    pt.insert("abb", doclist=['afile', 'pdfile'])
+    pt.insert("abb", doclist=['bfile'])
+    pt.insert("abb", doclist=['bfile'])
     print(pt.find_word("abb").doclist)
     print(pt.starts_with("ab"))

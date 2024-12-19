@@ -37,12 +37,13 @@ def stem(text: str) -> list[str]:
     Returns:
         list[str]: a list of strs containing stemmed words
     """
+    out_c, out_l = [], []
+
     if cyrillic_check(text):
         stemmer = SnowballStemmer("russian")
         tokens = word_tokenize(text)
         stemmed_words_c = [stemmer.stem(word) for word in tokens]
 
-        out_c = []
         for word in stemmed_words_c:
             if cyrillic_check(word):
                 out_c.append(word)
@@ -52,7 +53,6 @@ def stem(text: str) -> list[str]:
         stemmer = SnowballStemmer("english")
         tokens = word_tokenize(text)
         stemmed_words_l = [stemmer.stem(word) for word in tokens]
-        out_l = []
 
         for word in stemmed_words_l:
             if latin_check(word):

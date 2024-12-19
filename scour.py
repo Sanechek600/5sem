@@ -18,12 +18,15 @@ logging.basicConfig(
 if __name__ == "__main__":
     dir_path = "D:/Scour_test/"
     
-    pt = PrefixTree
+    pt = PrefixTree()
 
     for i in range(1, 5):
         path = os.path.join(dir_path, f"test{i}.txt")
         with open(path, 'r') as f:
             dict_of_file = read_file(path, encoding="utf-8")
-            stemmed_words = stem(dict_of_file["Content"]).append(dict_of_file["Filename"])
-            for word in stemmed_words:
-                pt.insert(word, os.path.basename(path))
+        stemmed_words = stem(dict_of_file["Content"])
+        stemmed_words.append(dict_of_file["Filename"])
+        for word in stemmed_words:
+            pt.insert(word=word, doclist=[os.path.abspath(path)])
+    
+    print(pt.find_word("альф").doclist)
