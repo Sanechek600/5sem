@@ -1,7 +1,6 @@
 import re
 import logging
 
-import nltk
 from nltk.tokenize import word_tokenize
 from nltk.stem import SnowballStemmer
 from nltk.corpus import stopwords
