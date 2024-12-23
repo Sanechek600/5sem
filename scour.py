@@ -5,6 +5,7 @@ import shutil
 from tkinter import *
 import tkinter.filedialog as fd
 import tkinter.messagebox as mb
+from tkinter.ttk import Combobox
 
 import rw_processes as rw
 from text_processes import stem
@@ -22,44 +23,60 @@ logging.basicConfig(
     encoding="utf-8"
 )
 
-# Creating the backend functions for python file explorer project
-def open_file():
-    file = fd.askopenfilename(title='Choose a file of any type', filetypes=[("All files", "*.*")])
-    os.startfile(os.path.abspath(file))
-def open_folder():
-    folder = fd.askdirectory(title="Select Folder to open")
-    os.startfile(folder)
-def list_files_in_folder():
-    i = 0
-    folder = fd.askdirectory(title='Select the folder whose files you want to list')
-    files = os.listdir(os.path.abspath(folder))
-    list_files_wn = Toplevel(root)
-    list_files_wn.title(f'Files in {folder}')
-    list_files_wn.geometry('250x250')
-    list_files_wn.resizable(0, 0)
-    listbox = Listbox(list_files_wn)
-    listbox.place(relx=0, rely=0, relheight=1, relwidth=1)
-    scrollbar = Scrollbar(listbox, orient=VERTICAL, command=listbox.yview)
-    scrollbar.pack(side=RIGHT, fill=Y)
-    listbox.config(yscrollcommand=scrollbar.set)
-    while i < len(files):
-        listbox.insert(END, files[i])
-        i += 1
-
 if __name__ == "__main__":
-    # Initializing the window
     root = Tk()
     root.title("Scour")
-    root.geometry('600x400')
-    root.resizable(0, 0)
-    root.config()
-    # Creating and placing the components in the window
-    Label(root, text="Scour", font=("Calibri", 20), wraplength=250).place(x=20, y=0)
-    Button(root, text='Open a file', width=20, command=open_file).place(x=30, y=30)
-    Canvas(root, width=20).place(x=100, y=0)
-    Button(root, text='Open a folder', width=20, command=open_folder).place(x=30, y=60)
-    Button(root, text='List all files in a folder', width=20,
-        command=list_files_in_folder).place(x=30, y=330)
-    # Finalizing the window
-    root.update()
+    root.geometry("400x600")
+    
+    pt = PrefixTree()
+    
+    def selected(event):
+        # получаем выделенный элемент
+        selection = search_mode.get()
+        print(selection)
+        label_t['text'] = search_mode.get()
+    
+    def submit_path():
+        label_t["text"] = f"{path_string.get()}"
+        pt = rw.scour_directory(path_string.get())
+        rw.serialize_trie(pt, os.path.join(path_string.get(), "trie.pkl"))
+        
+    def run_query():
+        pt = rw.deserialize_trie(os.path.join(path_string.get(), "trie.pkl"))
+        listbox["listvariable"] = find_doclist_by_query(
+            pt, query_string.get(), search_mode.get())
+        
+    
+    search_modes = ["AND", "OR"]
+    
+    label = Label(text="Scour")
+    label.pack(anchor=NW, fill=None, padx=5, pady=5)
+    
+    label_t = Label(root, text="Choose directory")
+    label_t.pack(anchor=NW, fill=None, padx=5, pady=5)
+    
+    path_string = StringVar()
+    path = Entry(root, textvariable=path_string)
+    path.pack(anchor=NW, fill=X, padx=5, pady=5)
+    
+    submit_button = Button(root, text="Submit")
+    submit_button.pack(anchor=NE, fill=X, padx=5, pady=5)
+    submit_button["command"] = submit_path
+    
+    query_string = StringVar()
+    query = Entry(root, textvariable=query_string)
+    query.pack(anchor=NW, fill=X, padx=5, pady=5)
+    
+    search_mode = StringVar()
+    combobox = Combobox(root, values=search_modes, state="readonly", textvariable=search_mode)
+    combobox.pack(anchor=NW, fill=X, padx=5, pady=5)
+    combobox.bind("<<ComboboxSelected>>", selected)
+    
+    query_run = Button(root, text="Run query")
+    query_run.pack(anchor=NE, fill=X, padx=5, pady=5)
+    query_run["command"] = run_query
+    
+    listbox = Listbox(root)
+    listbox.pack(anchor=NW, fill=BOTH, padx=5, pady=5)
+    
     root.mainloop()
