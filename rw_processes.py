@@ -48,10 +48,10 @@ def read_file_to_trie(pt: PrefixTree, file_path: str) -> None:
         dict_of_file = read_file(file_path, encoding="utf-8")
 
     stemmed_words = stem(dict_of_file["Content"])
-    stemmed_words.append(dict_of_file["Filename"])
 
     for word in stemmed_words:
         pt.insert(word=word, doclist=[os.path.abspath(file_path)])
+    pt.insert(word=dict_of_file["Filename"], doclist=[os.path.abspath(file_path)])
 
 def scour_directory(dir_path: str) -> PrefixTree:
     files = []
