@@ -33,6 +33,9 @@ def execute():
         
     def run_query():
         pt = rw.deserialize_trie(os.path.join(path_string.get(), "trie.pkl"))
+        mode = search_mode.get()
+        if search_mode.get() == "":
+            label_t["text"] = "Choose search paradigm"
         try:
             search_res = find_doclist_by_query(
                 pt, query_string.get(), 
