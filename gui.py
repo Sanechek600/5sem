@@ -17,12 +17,19 @@ def execute():
         # получаем выделенный элемент
         selection = search_mode.get()
         print(selection)
-        label_t['text'] = f"Выбран режим поиска {search_mode.get()}"
+        label_t['text'] = f"Search mode {search_mode.get()}"
     
     def submit_path():
-        label_t["text"] = f"{path_string.get()}"
+        label_t["text"] = f"Saving {path_string.get()}"
         pt = rw.scour_directory(path_string.get())
         rw.serialize_trie(pt, os.path.join(path_string.get(), "trie.pkl"))
+
+    def load_path():
+        label_t["text"] = f"Loading {path_string.get()}"
+        if os.path.exists(os.path.join(path_string.get(), "trie.pkl")):
+            label_t["text"] = f"Index found for {path_string.get()}"
+        else:
+            label_t["text"] = f"No index for {path_string.get()}"
         
     def run_query():
         pt = rw.deserialize_trie(os.path.join(path_string.get(), "trie.pkl"))
@@ -50,6 +57,10 @@ def execute():
     submit_button = Button(root, text="Index and save")
     submit_button.pack(anchor=NE, fill=X, padx=5, pady=5)
     submit_button["command"] = submit_path
+
+    load_button = Button(root, text="Load index")
+    load_button.pack(anchor=NE, fill=X, padx=5, pady=5)
+    load_button["command"] = load_path
     
     query_string = StringVar()
     query = Entry(root, textvariable=query_string)
