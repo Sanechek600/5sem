@@ -17,7 +17,10 @@ def find_doclist_of_term(pt: PrefixTree, term: str) -> List[str]:
     Returns:
         List[str]: A list of document identifiers associated with the term.
     """
-    doclist = pt.find_word(term).doclist
+    try:
+        doclist = pt.find_word(term).doclist
+    except Exception as e:
+        logging.error(f"Could't find doclist for {term}: {e}")
     logging.debug(f"Found doclist for {term}: {doclist}")
     return doclist
 

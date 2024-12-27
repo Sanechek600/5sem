@@ -26,11 +26,14 @@ def execute():
         
     def run_query():
         pt = rw.deserialize_trie(os.path.join(path_string.get(), "trie.pkl"))
-        search_res = find_doclist_by_query(
-            pt, query_string.get(), 
-            search_mode.get()
-            )
-        res.set(search_res)
+        try:
+            search_res = find_doclist_by_query(
+                pt, query_string.get(), 
+                search_mode.get()
+                )
+            res.set(search_res)
+        except:
+            res.set(["Invalid request"])
 
     search_modes = ["AND", "OR"]
     

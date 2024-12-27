@@ -3,6 +3,7 @@ import logging
 import pickle
 from typing import Dict
 from pathlib import Path
+import docx
 
 from trie import PrefixTree
 from text_processes import stem
@@ -18,9 +19,18 @@ def read_file(file_path: str, encoding: str) -> Dict[str, str]:
     """
     out = {"Filename": "", "Content": ""}
     try:
-        with open(file_path, "r", encoding=encoding) as file:
+        if file_path.endswith(".txt"):
+            with open(file_path, "r", encoding=encoding) as file:
+                out["Filename"] = Path(os.path.basename(file_path)).stem
+                out["Content"] = str(file.read())
+        elif file_path.endswith(".docx"):
             out["Filename"] = Path(os.path.basename(file_path)).stem
-            out["Content"] = str(file.read())
+            text = ""
+            doc = docx.Document(file_path)
+            for paragrapth in doc.paragraphs:
+                text = text + paragrapth.text + "\n"
+            out["Content"] = text
+
             logging.debug(f"Read from {file_path}")
     except Exception as e: 
         logging.error(f"Error in read_file: {e}")
@@ -46,7 +56,7 @@ def read_file_to_trie(pt: PrefixTree, file_path: str) -> None:
 def scour_directory(dir_path: str) -> PrefixTree:
     files = []
     for file in os.listdir(dir_path):
-        if file.endswith(".txt"):
+        if file.endswith(".txt") or file.endswith(".docx"):
             files.append(os.path.join(dir_path, file))
 
     pt = PrefixTree()
